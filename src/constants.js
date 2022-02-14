@@ -1,0 +1,1 @@
+export const demoFfKey = 'react-demo-tic-tac-toe';
