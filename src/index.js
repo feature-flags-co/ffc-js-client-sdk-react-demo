@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Ffc from 'ffc-js-client-sdk';
+import Ffc from 'ffc-js-client-side-sdk';
 import Board from './board';
 import { demoFfKey } from './constants';
 
