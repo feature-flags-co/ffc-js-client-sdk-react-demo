@@ -6,8 +6,14 @@ import Board from './board';
 import { demoFfKey } from './constants';
 
   const option = {
-    secret: 'MzZlLTY1MTAtNCUyMDIxMTEwMTE0NTIwNF9fNV9fNl9fMTJfX2RlZmF1bHRfYzVlNzU=',
-    anonymous: true,
+    secret: '[envSecret]', // use your own secret
+    //anonymous: true,
+    devModePassword: '123abc',
+    user: {
+      id: '123',
+      userName: '123',
+      email:'123@aa.com'
+    }
   };
 
   Ffc.init(option);
@@ -21,33 +27,34 @@ import { demoFfKey } from './constants';
           }],
           stepNumber: 0,
           xIsNext: true,
-          boardBackgroundColor: Ffc.variation(demoFfKey, 'yellow'),
+          boardBackgroundColor: Ffc.variation(demoFfKey, 'brown'),
         };
 
         Ffc.on(`ff_update:${demoFfKey}`, (change) => {
             this.setState({
                 boardBackgroundColor: change['newValue'],
-                //boardBackgroundColor: Ffc.variation(demoFfKey, 'X'),
-            });
-        });
-    
-    
-        Ffc.on('ready', () => {
-            this.setState({
-                boardBackgroundColor: Ffc.variation(demoFfKey, 'X'),
+                //boardBackgroundColor: Ffc.variation(demoFfKey, 'yellow'),
             });
         });
       }
 
     jumpTo(step) {
+      Ffc.activateDevMode('123abc');
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0,
         });
     }
     
+    
 
     handleClick(i) {
+      Ffc.openDevModeEditor();
+      // Ffc.identify({
+      //   id: 123,
+      //   userName: '123',
+      //   email:'123@aa.com'
+      // });
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
@@ -105,6 +112,7 @@ import { demoFfKey } from './constants';
   }
   
   // ========================================
+  
   
   ReactDOM.render(
     <Game />,
