@@ -3,139 +3,129 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import Ffc from 'ffc-js-client-side-sdk';
 import Board from './board';
-import { demoFfKey } from './constants';
+import WinBoard from './winEffect';
 
-  const option = {
-    secret: '[envSecret]', // use your own secret
-    //anonymous: true,
-    devModePassword: '123abc',
-    user: {
-      id: '123',
-      userName: '123',
-      email:'123@aa.com'
+
+
+Ffc.init({
+  secret: 'NWNiLWI0ZTQtNCUyMDIyMDIyMzAzNDYyOV9fMl9fMjJfXzI5Nl9fZGVmYXVsdF9kNmRjNA==', 
+  anonymous: true
+});
+
+class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+      stepNumber: 0,
+      xIsNext: true,
+      showWinEffect: Ffc.variation('快速入门用Feature-Flag', 'false')
+    };
+
+    Ffc.on(`ff_update:快速入门用Feature-Flag`, (change) => {
+      console.log('gogogo');
+      console.log(change);
+      this.setState({
+        showWinEffect: change.newValue
+      });
+    });
+  }
+
+  jumpTo(step) {
+    Ffc.activateDevMode('123abc');
+    this.setState({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
+    });
+  }
+
+  handleClick(i) {
+    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+    const current = history[history.length - 1];
+    const squares = current.squares.slice();
+    if (calculateWinner(squares) || squares[i]) {
+      return;
     }
-  };
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      history: history.concat([{
+        squares: squares,
+      }]),
+      stepNumber: history.length,
+      xIsNext: !this.state.xIsNext,
+    });
+  }
 
-  Ffc.init(option);
+  render() {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.squares);
 
-  class Game extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          history: [{
-            squares: Array(9).fill(null),
-          }],
-          stepNumber: 0,
-          xIsNext: true,
-          boardBackgroundColor: Ffc.variation(demoFfKey, 'brown'),
-        };
-
-        Ffc.on(`ff_update:${demoFfKey}`, (change) => {
-            this.setState({
-                boardBackgroundColor: change['newValue'],
-                //boardBackgroundColor: Ffc.variation(demoFfKey, 'yellow'),
-            });
-        });
-      }
-
-    jumpTo(step) {
-      Ffc.activateDevMode('123abc');
-        this.setState({
-            stepNumber: step,
-            xIsNext: (step % 2) === 0,
-        });
-    }
-    
-    
-
-    handleClick(i) {
-      Ffc.openDevModeEditor();
-      // Ffc.identify({
-      //   id: 123,
-      //   userName: '123',
-      //   email:'123@aa.com'
-      // });
-        const history = this.state.history.slice(0, this.state.stepNumber + 1);
-        const current = history[history.length - 1];
-        const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]) {
-        return;
-        }
-        squares[i] = this.state.xIsNext ? 'X' : 'O';
-        this.setState({
-        history: history.concat([{
-            squares: squares,
-        }]),
-        stepNumber: history.length,
-        xIsNext: !this.state.xIsNext,
-        });
-    }
-
-    render() {
-        const history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);
-
-        const moves = history.map((step, move) => {
-            const desc = move ?
-              'Go to move #' + move :
-              'Go to game start';
-            return (
-              <li key={move}>
-                <button onClick={() => this.jumpTo(move)}>{desc}</button>
-              </li>
-            );
-          });
-
-        let status;
-        if (winner) {
-            status = 'Winner: ' + winner;
-        } else {
-            status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-        } 
+    const moves = history.map((step, move) => {
+      const desc = move ?
+        'Go to move #' + move :
+        'Go to game start';
       return (
-        <div className="game">
-          <div className="game-board">
-            <Board
-                backgroundColor={this.state.boardBackgroundColor}
-                squares={current.squares}
-                onClick={(i) => this.handleClick(i)}
-            />
-          </div>
-          <div className="game-info">
-            <div>{status}</div>
-            <ol>{moves}</ol>
-          </div>
-        </div>
+        <li key={move}>
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+        </li>
       );
-    }
-  }
-  
-  // ========================================
-  
-  
-  ReactDOM.render(
-    <Game />,
-    document.getElementById('root')
-  );
+    });
 
-  function calculateWinner(squares) {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
-      }
+    let status;
+    if (winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
-    return null;
+    return (
+      <div className="game">
+        <div className="game-board">
+          <Board
+            squares={current.squares}
+            onClick={(i) => this.handleClick(i)}
+          />
+          {
+            this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
+          }
+
+        </div>
+        <div className="game-info">
+          <div>{status}</div>
+          <ol>{moves}</ol>
+          <div></div>
+        </div>
+      </div>
+    );
   }
-  
+}
+
+// ========================================
+
+
+ReactDOM.render(
+  <Game />,
+  document.getElementById('root')
+);
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
+}
