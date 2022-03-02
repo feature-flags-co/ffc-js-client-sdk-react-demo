@@ -6,12 +6,12 @@ import Board from './board';
 import WinBoard from './winEffect';
 
 
-// Ffc.init初始化的代码开始位置
-Ffc.init({
-  secret: 'NWNiLWI0ZTQtNCUyMDIyMDIyMzAzNDYyOV9fMl9fMjJfXzI5Nl9fZGVmYXVsdF9kNmRjNA==', 
-  anonymous: true
-});
-// Ffc.init初始化的代码结束位置
+// Ffc.init 初始化的代码开始位置
+
+
+
+
+// Ffc.init 初始化的代码结束位置
 
 class Game extends React.Component {
   constructor(props) {
@@ -22,13 +22,13 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      showWinEffect: Ffc.variation('快速入门用Feature-Flag', 'false')
+      showWinEffect: 'false'    
     };
 
     // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码开始位置
-    Ffc.on(`ff_update:快速入门用Feature-Flag`, (change) => {
-      this.setState({ showWinEffect: change.newValue });
-    });
+
+
+    
     // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码结束位置
   }
 

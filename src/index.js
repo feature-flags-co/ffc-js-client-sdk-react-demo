@@ -4,14 +4,31 @@ import './index.css';
 import Ffc from 'ffc-js-client-side-sdk';
 import Board from './board';
 import WinBoard from './winEffect';
+import UserInfo from './userInfo';
+import ffc from 'ffc-js-client-side-sdk';
 
+const userName = '随机用户' + Math.round(Math.random() * 1000);
 
-// Ffc.init 初始化的代码开始位置
-
-
-
-
-// Ffc.init 初始化的代码结束位置
+// Ffc.init初始化的代码开始位置
+Ffc.init({
+  secret: 'NWNiLWI0ZTQtNCUyMDIyMDIyMzAzNDYyOV9fMl9fMjJfXzI5Nl9fZGVmYXVsdF9kNmRjNA==',
+  anonymous: false,
+  user: {
+    userName: userName,
+    id: 'ffc-demo-' + userName,
+    customizedProperties: [
+      {
+        "name": "粘性",
+        "value": Math.round(Math.random() * 10).toString()
+      },
+      {
+        "name": "最近7天活跃度",
+        "value": Math.round(Math.random()).toString()
+      },
+    ]
+  }
+});
+// Ffc.init初始化的代码结束位置
 
 class Game extends React.Component {
   constructor(props) {
@@ -22,22 +39,65 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      showWinEffect: 'false'    
+      showWinEffect: Ffc.variation('快速入门用Feature-Flag', 'false'),
+      robot: Ffc.variation('robot', '深蓝'),
+      databaseV: Ffc.variation('user_info_db_migration', 'azure'),
+      showNewUserInfoVersion: Ffc.variation('用户信息模块', 'v1.0.0'),
+      userName: userName,
     };
 
     // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码开始位置
-
-
-    
+    Ffc.on(`ff_update:快速入门用Feature-Flag`, (change) => {
+      this.setState({ showWinEffect: change.newValue });
+    });
+    Ffc.on(`ff_update:robot`, (change) => {
+      this.setState({ robot: change.newValue });
+    });
+    Ffc.on(`ff_update:user_info_db_migration`, (change) => {
+      this.setState({ databaseV: change.newValue });
+    });
+    Ffc.on(`ff_update:用户信息模块`, (change) => {
+      this.setState({ showNewUserInfoVersion: change.newValue });
+    });
     // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码结束位置
   }
 
   jumpTo(step) {
-    Ffc.activateDevMode('123abc');
+    // Ffc.activateDevMode('123abc');
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
     });
+  }
+
+  robotAction(squares) {
+    let handled = false;
+    let firstNullCase = 0;
+    for (let i = 0; i < squares.length; i++) {
+      if (squares[i] === null && Math.random() < 0.3) {
+        this.handleClick(i);
+        handled = true;
+        break;
+      }
+    }
+    if (handled == false) {
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null && Math.random() < 0.7) {
+          this.handleClick(i);
+          handled = true;
+          break;
+        }
+      }
+    }
+    if (handled == false) {
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null && Math.random() < 2) {
+          this.handleClick(i);
+          handled = true;
+          break;
+        }
+      }
+    }
   }
 
   handleClick(i) {
@@ -54,6 +114,9 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+    }, () => {
+      if (this.state.xIsNext === false)
+        this.robotAction(squares);
     });
   }
 
@@ -82,16 +145,31 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
+
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
+          {
+            this.state.showNewUserInfoVersion == 'v1.0.0' ?
+              <div>
+                <div style={{ marginTop: "10px" }}>
+                  玩家： {this.state.userName}
+                </div>
+              </div> :
+
+              <UserInfo databaseV={this.state.databaseV}
+                playerName={this.state.userName}
+                totalGameCount={Math.round(Math.random() * 1000).toString()}
+                wonGameCount={Math.round(Math.random() * (Math.random() * 100)).toString()} />
+          }
           {
             this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
           }
 
         </div>
         <div className="game-info">
+          <div>对手：{this.state.robot}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
           <div></div>
