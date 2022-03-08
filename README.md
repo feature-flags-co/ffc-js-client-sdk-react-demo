@@ -32,7 +32,11 @@ npm run start
 - square.js: use withFfcConsumer in a function component
 - board.js: use withFfcConsumer in a class component
 
-In the current example we used local data, the synchonization with our SaaS platform [feature-flags.co](https://portal.feature-flags.co/) is disabled. 
+In the current example we used local data, the synchonization with our SaaS platform [feature-flags.co](https://portal.feature-flags.co/) is disabled. You can activate developer mode to play with the feature flags by running in the browser console.
+```javascript
+activateFfcDevMode();
+```
+The function is available globally.
 
 If you want to play with real data, you need to create an account and the following feature flags on SaaS platform [feature-flags.co](https://portal.feature-flags.co/)
 

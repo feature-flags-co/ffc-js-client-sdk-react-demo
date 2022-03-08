@@ -74,7 +74,9 @@ class Game extends React.Component {
       xIsNext: !this.state.xIsNext,
     }, () => {
       if (this.state.xIsNext === false)
-        this.robotAction(squares);
+        setTimeout(() => {
+          this.robotAction(squares);
+        }, 500)
     });
   }
 
