@@ -1,7 +1,8 @@
 import Square from './square';
 import React from 'react';
+import { withFfcConsumer } from 'ffc-react-client-sdk';
 
-export default class Board extends React.Component {
+class Board extends React.Component {
     renderSquare(i) {
       return (
         <Square 
@@ -10,8 +11,10 @@ export default class Board extends React.Component {
         />
       );
     }
-  
+
     render() {
+      const { flags, ffcClient } = this.props;
+
       return (
         <div>
           <div className="board-row">
@@ -33,3 +36,5 @@ export default class Board extends React.Component {
       );
     }
   }
+
+  export default withFfcConsumer()(Board)

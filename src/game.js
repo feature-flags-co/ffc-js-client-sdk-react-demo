@@ -1,18 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './index.css';
-import Ffc from 'ffc-js-client-side-sdk';
 import Board from './board';
 import WinBoard from './winEffect';
+import UserInfo from './userInfo';
+import { withFfcProvider } from 'ffc-react-client-sdk';
+import { context } from 'ffc-react-client-sdk';
+import { configWithUser, userName } from './config';
 
-
-// Ffc.init初始化的代码开始位置
-Ffc.init({
-  secret: 'NWNiLWI0ZTQtNCUyMDIyMDIyMzAzNDYyOV9fMl9fMjJfXzI5Nl9fZGVmYXVsdF9kNmRjNA==', 
-  anonymous: true
-});
 // Ffc.init初始化的代码结束位置
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
@@ -22,22 +17,45 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
-      showWinEffect: Ffc.variation('快速入门用Feature-Flag', 'false')
+      userName: userName,
     };
-
-    // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码开始位置
-    Ffc.on(`ff_update:快速入门用Feature-Flag`, (change) => {
-      this.setState({ showWinEffect: change.newValue });
-    });
-    // Ffc.on 监听Feature Flags的变化控制功能模块的发布 代码结束位置
   }
 
   jumpTo(step) {
-    Ffc.activateDevMode('123abc');
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
     });
+  }
+
+  robotAction(squares) {
+    let handled = false;
+    let firstNullCase = 0;
+    for (let i = 0; i < squares.length; i++) {
+      if (squares[i] === null && Math.random() < 0.3) {
+        this.handleClick(i);
+        handled = true;
+        break;
+      }
+    }
+    if (handled === false) {
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null && Math.random() < 0.7) {
+          this.handleClick(i);
+          handled = true;
+          break;
+        }
+      }
+    }
+    if (handled === false) {
+      for (let i = 0; i < squares.length; i++) {
+        if (squares[i] === null && Math.random() < 2) {
+          this.handleClick(i);
+          handled = true;
+          break;
+        }
+      }
+    }
   }
 
   handleClick(i) {
@@ -54,10 +72,16 @@ class Game extends React.Component {
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
+    }, () => {
+      if (this.state.xIsNext === false)
+        this.robotAction(squares);
     });
   }
 
+  static contextType = context;
   render() {
+    const { flags, ffcClient } = this.context;
+
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
@@ -87,11 +111,25 @@ class Game extends React.Component {
             onClick={(i) => this.handleClick(i)}
           />
           {
+              flags.用户信息模块 === 'v1.0.0' ?
+              <div>
+                <div style={{ marginTop: "10px" }}>
+                  玩家： {this.state.userName}
+                </div>
+              </div> :
+
+              <UserInfo databaseV={this.state.databaseV}
+                playerName={this.state.userName}
+                totalGameCount={Math.round(Math.random() * 1000).toString()}
+                wonGameCount={Math.round(Math.random() * (Math.random() * 100)).toString()} />
+          }
+          {
             this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
           }
 
         </div>
         <div className="game-info">
+          <div>对手：{flags.robot}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
           <div></div>
@@ -100,14 +138,6 @@ class Game extends React.Component {
     );
   }
 }
-
-// ========================================
-
-
-ReactDOM.render(
-  <Game />,
-  document.getElementById('root')
-);
 
 function calculateWinner(squares) {
   const lines = [
@@ -128,3 +158,9 @@ function calculateWinner(squares) {
   }
   return null;
 }
+ 
+// Uncomment the following line to use withFfcProvider
+export default withFfcProvider(configWithUser)(Game);
+
+// Uncommennt the following line to use asyncWithFfcProvider
+// export default Game;
