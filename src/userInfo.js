@@ -1,19 +1,9 @@
 
-import { useFfcClient } from 'ffc-react-client-sdk';
-import { context } from 'ffc-react-client-sdk';
-import { useContext } from 'react';
-require('react-dom');
-window.React2 = require('react');
-console.log(window.React1 === window.React2);
-
-const useFlags = () => {
-    const { flags } = useContext(context);
-    return flags;
-}
+import { useFfcClient, useFlags } from 'ffc-react-client-sdk';
 
 const UserInfo = props => {
     const { robot } = useFlags();
-    useFfcClient();
+    const ffcClient = useFfcClient();
     
     return (
         <div>

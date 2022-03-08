@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+# ffc React client SDK example
+This project is an example of how to use the [ffc-react-client-sdk](https://github.com/feature-flags-co/ffc-react-client-sdk).
+It is built based on the [React official tutorial](https://reactjs.org/tutorial/tutorial.html) tic tac toe game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+You can use one of the two ways to initialize the [ffc-react-client-sdk](https://github.com/feature-flags-co/ffc-react-client-sdk):
 
-In the project directory, you can run:
+- Using the asyncWithFfcProvider function
+- Using the withFfcProvider function
 
-### `npm start`
+Both rely on React's Context API which lets you access your flags from any level of your component hierarchy. **withFfcProvider is used by default in this example**.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To switching between the two ways, you need to modify two files:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- game.js
+- index.js
 
-### `npm test`
+Go to the bottom of each file and follow the instructions there to switch between the two ways.  
+To learn the difference between the two initialization methods, please read [Initializing the SDK](https://github.com/feature-flags-co/ffc-react-client-sdk#initializing-the-sdk)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Run the example
+Run the following commands, then the App should be available at http://localhost:3000
 
-### `npm run build`
+```bash
+npm install
+npm run start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Explications
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- userinfo.js: use useFlags and useFfcClient in a function component
+- square.js: use withFfcConsumer in a function component
+- board.js: use withFfcConsumer in a class component
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+In the current example we used local data, the synchonization with our SaaS platform [feature-flags.co](https://portal.feature-flags.co/) is disabled. 
 
-### `npm run eject`
+If you want to play with real data, you need to create an account and the following feature flags on SaaS platform [feature-flags.co](https://portal.feature-flags.co/)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```javascript
+const flags = [
+    {
+        "id": "robot",
+        "variation": "阿尔法猫",
+        "timestamp": 1646688885330,
+        "variationOptions": [{
+            "id": 1,
+            "value": "深蓝"
+        }, {
+            "id": 2,
+            "value": "阿尔法猫"
+        }],
+        "sendToExperiment": true
+    },
+    {
+        "id": "用户信息模块",
+        "variation": "v1.0.0",
+        "timestamp": 1646380582151,
+        "variationOptions": [{
+            "id": 1,
+            "value": "v1.0.0"
+        }, {
+            "id": 2,
+            "value": "v1.1.0"
+        }],
+        "sendToExperiment": true
+    },
+    {
+        "id": "user_info_db_migration",
+        "variation": "azure",
+        "timestamp": 1646267387598,
+        "variationOptions": [{
+            "id": 1,
+            "value": "azure"
+        }, {
+            "id": 2,
+            "value": "aws"
+        }],
+        "sendToExperiment": true
+    }
+];
+```
+then update the two variables in the [config.js](./src/board.js) file with the following values:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```javascript
+const secret = 'use your environment secret';
+const enableDataSync = true;
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+the same feature flags are passed to the SDK during initialization, check [config.js](./src/board.js)

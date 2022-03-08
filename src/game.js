@@ -5,7 +5,7 @@ import WinBoard from './winEffect';
 import UserInfo from './userInfo';
 import { withFfcProvider } from 'ffc-react-client-sdk';
 import { context } from 'ffc-react-client-sdk';
-import config, { userName } from './config';
+import { configWithUser, userName } from './config';
 
 // Ffc.init初始化的代码结束位置
 class Game extends React.Component {
@@ -22,7 +22,6 @@ class Game extends React.Component {
   }
 
   jumpTo(step) {
-    // Ffc.activateDevMode('123abc');
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
@@ -81,6 +80,8 @@ class Game extends React.Component {
 
   static contextType = context;
   render() {
+    const { flags, ffcClient } = this.context;
+
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
@@ -105,13 +106,12 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
           {
-            this.context.flags.用户信息模块 === 'v1.0.0' ?
+              flags.用户信息模块 === 'v1.0.0' ?
               <div>
                 <div style={{ marginTop: "10px" }}>
                   玩家： {this.state.userName}
@@ -129,7 +129,7 @@ class Game extends React.Component {
 
         </div>
         <div className="game-info">
-          <div>对手：{this.context.flags.robot}</div>
+          <div>对手：{flags.robot}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
           <div></div>
@@ -159,5 +159,8 @@ function calculateWinner(squares) {
   return null;
 }
  
-export default withFfcProvider(config)(Game);
+// Uncomment the following line to use withFfcProvider
+export default withFfcProvider(configWithUser)(Game);
+
+// Uncommennt the following line to use asyncWithFfcProvider
 // export default Game;
