@@ -1,6 +1,6 @@
 export const userName = '随机用户'// + Math.round(Math.random() * 1000);
 
-const secret = '';
+const secret = '==';
 const enableDataSync = false;
 
 const flags = [
@@ -77,6 +77,6 @@ export const configWithUser = {
 export const configWithAnonymousUser = {
     options: {
         anonymous: true,
-        ...configBase
+        ...configBase.options
     }
 }
