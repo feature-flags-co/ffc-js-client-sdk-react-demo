@@ -13,8 +13,6 @@ class Board extends React.Component {
     }
 
     render() {
-      const { flags, ffcClient } = this.props;
-
       return (
         <div>
           <div className="board-row">

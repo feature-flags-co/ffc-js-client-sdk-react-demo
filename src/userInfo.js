@@ -1,23 +1,35 @@
 
-import { useFfcClient, useFlags } from 'ffc-react-client-sdk';
+import { useFlags } from 'ffc-react-client-sdk';
+import { queryParams } from "./utils";
 
 const UserInfo = props => {
-    const { robot } = useFlags();
-    const ffcClient = useFfcClient();
-    
+    const flags = useFlags();
+    const flagName = queryParams['flagname'];
+
     return (
-        <div>
+        <div className="user-info">
             <h2>玩家信息</h2>
-            <div>1: {robot}</div>
-            <div>
-                用户名： {props.playerName}
-            </div>
-            <div>
-                总游戏数：{props.databaseV === 'aws' ? '-' + props.totalGameCount * 99 : props.totalGameCount}
-            </div>
-            <div>
-                胜场数：{props.wonGameCount}
-            </div>
+            {
+              flags[flagName] === 'false' ?
+              <div>
+                <div className="info-item">
+                  用户名: {props.playerName}
+                </div>
+              </div> :
+
+              <div>
+                <div className="info-item">
+                  用户名: {props.playerName}
+                </div>
+                <div className="info-item">
+                  性别: {props.playerSex}
+                </div>
+                <div className="info-item">
+                  地区: {props.playerLocation}
+                </div>
+              </div>
+            }
+            
         </div>
     );
 };

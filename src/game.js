@@ -18,6 +18,8 @@ class Game extends React.Component {
       stepNumber: 0,
       xIsNext: true,
       userName: userName,
+      sex: '女',
+      location: '北京'
     };
   }
 
@@ -30,7 +32,6 @@ class Game extends React.Component {
 
   robotAction(squares) {
     let handled = false;
-    let firstNullCase = 0;
     for (let i = 0; i < squares.length; i++) {
       if (squares[i] === null && Math.random() < 0.3) {
         this.handleClick(i);
@@ -82,7 +83,7 @@ class Game extends React.Component {
 
   static contextType = context;
   render() {
-    const { flags, ffcClient } = this.context;
+    const { flags } = this.context;
 
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -112,26 +113,16 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
-          {
-              flags.用户信息模块 === 'v1.0.0' ?
-              <div>
-                <div style={{ marginTop: "10px" }}>
-                  玩家： {this.state.userName}
-                </div>
-              </div> :
-
-              <UserInfo databaseV={this.state.databaseV}
-                playerName={this.state.userName}
-                totalGameCount={Math.round(Math.random() * 1000).toString()}
-                wonGameCount={Math.round(Math.random() * (Math.random() * 100)).toString()} />
-          }
+          <UserInfo 
+            playerName={this.state.userName}
+            playerSex={this.state.sex}
+            playerLocation={this.state.location}/>
           {
             this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
           }
 
         </div>
         <div className="game-info">
-          <div>对手：{flags.robot}</div>
           <div>{status}</div>
           <ol>{moves}</ol>
           <div></div>

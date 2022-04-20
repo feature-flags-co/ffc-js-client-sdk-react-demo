@@ -1,9 +1,9 @@
 
 import ReactDOM from 'react-dom';
 import Game from './game';
-import { configWithAnonymousUser, configWithUser} from './config';
-import { asyncWithFfcProvider, FfcProvider } from 'ffc-react-client-sdk';
-import ffcClient from 'ffc-js-client-side-sdk';
+// import { configWithAnonymousUser, configWithUser} from './config';
+// import { asyncWithFfcProvider, FfcProvider } from 'ffc-react-client-sdk';
+// import ffcClient from 'ffc-js-client-side-sdk';
 
 // Un comment this block to use asyncWithFfcProvider to init the React SDK
 // You will need to change the last line in the game.js file
