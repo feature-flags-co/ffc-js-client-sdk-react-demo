@@ -2,10 +2,8 @@
 本项目基于 React 官方教程 [tic tac toe game](https://reactjs.org/tutorial/tutorial.html) 改编而成，展示了如何在 React 项目中使用敏捷开关 React client SDK [ffc-react-client-sdk](https://github.com/feature-flags-co/ffc-react-client-sdk). 
 
 本项目中使用敏捷开关控制 **玩家信息** 模块新版本的发布与回滚，新版本相对旧版本增加了性别和地区两个信息。
-旧版运行结果（开关返回值为 false）
-![旧版运行结果](./public/运行截图v1.png)
 
-新版运行结果（开关返回值为 true）
+旧版和新版运行结果（开关返回值分别为 false 和 true）
 ![新版运行结果](./public/运行截图v2.png)
 
 # 运行示例程序
