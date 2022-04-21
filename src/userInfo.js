@@ -15,8 +15,8 @@ const UserInfo = props => {
                 <div className="info-item">
                   用户名: {props.playerName}
                 </div>
-              </div> :
-
+              </div> 
+              :
               <div>
                 <div className="info-item">
                   用户名: {props.playerName}
