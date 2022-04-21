@@ -6,6 +6,7 @@ import UserInfo from './userInfo';
 import { withFfcProvider } from 'ffc-react-client-sdk';
 import { context } from 'ffc-react-client-sdk';
 import { configWithUser, userName } from './config';
+import { queryParams } from "./utils";
 
 // Ffc.init初始化的代码结束位置
 class Game extends React.Component {
@@ -83,8 +84,6 @@ class Game extends React.Component {
 
   static contextType = context;
   render() {
-    const { flags } = this.context;
-
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
@@ -106,6 +105,10 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
+
+    const secret = queryParams['secret'];
+    const flagname = queryParams['flagname'];
+
     return (
       <div className="game">
         <div className="game-board">
@@ -113,10 +116,21 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
-          <UserInfo 
+          {
+            (!secret || !flagname) ? 
+            <div class="warning">
+              <div class="header">Environment secret and/or flag name are missings</div>
+              <div>They can be provided by query string as flagname=xxx&secret=xxx </div>
+              <div>or modify code directly in 
+                <ul><li>config.js (line 5) for environment secret</li><li>userinfo.js (line 7) for flag name</li></ul></div>
+            </div>
+            :
+            <UserInfo 
             playerName={this.state.userName}
             playerSex={this.state.sex}
             playerLocation={this.state.location}/>
+          }
+          
           {
             this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
           }
