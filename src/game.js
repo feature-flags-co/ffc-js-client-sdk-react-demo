@@ -3,13 +3,14 @@ import './index.css';
 import Board from './board';
 import WinBoard from './winEffect';
 import UserInfo from './userInfo';
-import { withFfcProvider } from 'ffc-react-client-sdk';
-import { context } from 'ffc-react-client-sdk';
+import { context, withFfcProvider } from 'ffc-react-client-sdk';
 import { configWithUser, userName } from './config';
 import { queryParams } from "./utils";
 
 // Ffc.init初始化的代码结束位置
 class Game extends React.Component {
+  static contextType = context;
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -82,11 +83,12 @@ class Game extends React.Component {
     });
   }
 
-  static contextType = context;
   render() {
+    const { flags } = this.context;
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+
 
     // flag name and secret value are passed from url to make an easier demostration from an online IDE.
     const secret = queryParams['secret'];
@@ -109,7 +111,7 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
-
+    console.log(flags);
     return (
       <div className="game">
         <div className="game-board">
@@ -118,7 +120,7 @@ class Game extends React.Component {
             onClick={(i) => this.handleClick(i)}
           />
 
-          
+
           {
             flags[flagname] === true ?
               <UserInfo
@@ -126,10 +128,8 @@ class Game extends React.Component {
                 playerSex={this.state.sex}
                 playerLocation={this.state.location} />
               :
-              null
+              <div></div>
           }
-
-          <WinBoard playerName={winner} />
 
           {
             (!secret || !flagname) ?
