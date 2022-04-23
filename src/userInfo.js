@@ -3,9 +3,6 @@ import { useFlags } from 'ffc-react-client-sdk';
 import { queryParams } from "./utils";
 
 const UserInfo = props => {
-    const flags = useFlags();
-    const flagName = queryParams['flagname'];
-
     return (
         <div className="user-info">
             <h2>玩家信息</h2>

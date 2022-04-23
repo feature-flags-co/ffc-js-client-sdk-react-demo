@@ -88,6 +88,10 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
+    // flag name and secret value are passed from url to make an easier demostration from an online IDE.
+    const secret = queryParams['secret'];
+    const flagname = queryParams['flagname'];
+
     const moves = history.map((step, move) => {
       const desc = move ?
         'Go to move #' + move :
@@ -106,9 +110,6 @@ class Game extends React.Component {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
-    const secret = queryParams['secret'];
-    const flagname = queryParams['flagname'];
-
     return (
       <div className="game">
         <div className="game-board">
@@ -116,23 +117,31 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
-          {
-            (!secret || !flagname) ? 
-            <div class="warning">
-              <div class="header">Environment secret and/or flag name are missings</div>
-              <div>They can be provided by query string as flagname=xxx&secret=xxx </div>
-              <div>or modify code directly in 
-                <ul><li>config.js (line 5) for environment secret</li><li>userinfo.js (line 7) for flag name</li></ul></div>
-            </div>
-            :
-            <UserInfo 
-            playerName={this.state.userName}
-            playerSex={this.state.sex}
-            playerLocation={this.state.location}/>
-          }
+
           
           {
-            this.state.showWinEffect === 'true' ? <WinBoard playerName={winner} /> : null
+            flags[flagname] === true ?
+              <UserInfo
+                playerName={this.state.userName}
+                playerSex={this.state.sex}
+                playerLocation={this.state.location} />
+              :
+              null
+          }
+
+          <WinBoard playerName={winner} />
+
+          {
+            (!secret || !flagname) ?
+              <div class="warning">
+                <h2>Demo Warning</h2>
+                <div class="header">Environment secret and/or flag name are missings</div>
+                <div>They can be provided by query string as flagname=xxx&secret=xxx </div>
+                <div>or modify code directly in
+                  <ul><li>config.js (line 5) for environment secret</li><li>userinfo.js (line 7) for flag name</li></ul></div>
+              </div>
+              :
+              null
           }
 
         </div>
@@ -165,7 +174,7 @@ function calculateWinner(squares) {
   }
   return null;
 }
- 
+
 // Uncomment the following line to use withFfcProvider
 export default withFfcProvider(configWithUser)(Game);
 
