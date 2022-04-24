@@ -1,7 +1,3 @@
-
-import { useFlags } from 'ffc-react-client-sdk';
-import { queryParams } from "./utils";
-
 const UserInfo = props => {
   return (
     <div className="user-info">

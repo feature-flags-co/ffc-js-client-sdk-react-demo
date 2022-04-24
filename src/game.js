@@ -1,7 +1,6 @@
 import React from 'react';
 import './index.css';
 import Board from './board';
-import WinBoard from './winEffect';
 import UserInfo from './userInfo';
 import { context, withFfcProvider } from 'ffc-react-client-sdk';
 import { configWithUser, userName } from './config';
@@ -111,7 +110,7 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
-    console.log(flags);
+
     return (
       <div className="game">
         <div className="game-board">
@@ -119,10 +118,8 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
-
-
           {
-            flags[flagname] === true ?
+            flags[flagname] === 'true' ?
               <UserInfo
                 playerName={this.state.userName}
                 playerSex={this.state.sex}
