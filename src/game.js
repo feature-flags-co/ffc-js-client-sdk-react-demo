@@ -134,8 +134,6 @@ class Game extends React.Component {
                 <h2>Demo Warning</h2>
                 <div class="header">Environment secret and/or flag name are missings</div>
                 <div>They can be provided by query string as flagname=xxx&secret=xxx </div>
-                <div>or modify code directly in
-                  <ul><li>config.js (line 5) for environment secret</li><li>userinfo.js (line 7) for flag name</li></ul></div>
               </div>
               :
               null
