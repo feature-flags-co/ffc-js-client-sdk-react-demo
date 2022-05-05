@@ -6,7 +6,7 @@ const secret = queryParams['secret'];
 const prod = queryParams['prod'];
 const configBase = {
     options: {
-        ...(!prod) && {api: 'https://api-dev.featureflag.co'}, 
+        ...(prod === 'false') && {api: 'https://api-dev.featureflag.co'}, 
         secret,
         bootstrap: []
     }
